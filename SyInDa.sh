@@ -1,27 +1,32 @@
+#!/usr/bin/bash
 echo ===============================================
 echo System Information Dashboard
 echo ===============================================
 #dispalaying username and password 
-printf "username : %s " "$whoami"
-printf "hostname : %s" "$hostname"
+printf "username : %s \n" "$(whoami)"
+printf "hostname : %s \n" "$(hostname)"
 
 #shows current date and time
-echo `date`
+printf "date : %s \n" "$(date)"
 
 #list system uptime
-echo 'your system up time : ' `uptime -p`
+printf "your system up time : %s \n" "$(uptime -p)"
 
 #show available disk space
 echo -------------available disk space--------------
-echo `df -h --output=source,size,used,avail`
+if ! command -v free &> /dev/null; then
+	echo "error : free command not founf"
+else
+	echo `df -h --output=source,size,used,avail`
+fi
 
 #dispalay RAM usage
 echo ------------------RAM usage--------------------
 echo `free -l -h`
 
-#show CPU information 
-echo ---------------CPU information-----------------
-echo `cat /proc/cpuinfo | grep 'vendor' | uniq`
-echo `cat /proc/cpuinfo | grep 'model name' | uniq`
-echo `cat /proc/cpuinfo | grep processor | wc -l`
-echo `cat /proc/cpuinfo | grep 'core id'`
+# CPU Information Section
+echo "---------------CPU Information-----------------"
+printf "CPU Vendor:\t%s\n" "$(grep 'vendor' /proc/cpuinfo | uniq | cut -d':' -f2)"
+printf "CPU Model :\t%s\n" "$(grep 'model name' /proc/cpuinfo | uniq | cut -d':' -f2)"
+printf "CPU Cores :\t%s\n" "$(nproc)"
+printf "Core IDs  :\t%s\n" "$(grep 'core id' /proc/cpuinfo | sort | uniq | wc -l)"
